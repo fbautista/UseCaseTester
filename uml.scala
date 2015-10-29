@@ -85,9 +85,15 @@ def unrelatedActors(nodes: NodeSeq) = {
   as filter { case (aid, _) => ! (bs exists { case (bid, _) => aid == bid }) }
 }
 
-/*
-def actorWithinBorder(nodes: NodeSer) = {
-//  val as = actors(nodes)
 
+def actorWithinBorder(nodes: NodeSeq) = {
+  val as = actors(nodes)
+  val inn = in(nodes)
+  as filter { case (aid,_) => (inn exists {case (bid,_) => aid == bid })}
 }
-*/
+
+def useCaseOutSideBorder(nodes: NodeSeq) = {
+  val uc = useCases(nodes)
+  val inn = in(nodes)
+  uc filter { case (ucid,_) => ! (inn exists {case (bid,_) => ucid == bid })}
+}
