@@ -29,37 +29,53 @@ def associations(nodes: NodeSeq) = {
   ownedEnds map (o => (o(0) \@ "type", o(1) \@ "type"))
 }
 
+/*
 def extendss(nodes: NodeSeq) = {
   val pe = packagedElements(nodes).filter(_ \"extend"\@ ("{" + ns + "}type") == "uml:Extend")
   pe map (o => ( o \@ ("{" + ns + "}id"), o \ "extend" \@ "extendedCase"))
 }
-
+*/
 
 /*
 def extendss(nodes: NodeSeq) = {
   val pe = packagedElements(nodes)
+  var list = List()
   //pe map (o => ( o \@ ("{" + ns + "}id"), o \ "extend" \@ "extendedCase"))
   for(as <-pe){
     for(ex <-as\"extend"){
       val typo1= as \@ ("{" + ns + "}id")
       val typo2= ex \@ "extendedCase"
-
+      list:+(typo1,typo2)
       println(typo1+" "+typo2)
     }
 
   }
+  list
 }
 */
 
+def extendss(nodes: NodeSeq) = {
+  val pe = packagedElements(nodes)
+  for {
+    as <- pe
+    ex <- as \ "extend"
+  } yield (as \@ ("{" + ns + "}id"), ex \@ "extendedCase")
+}
+
 def includes(nodes: NodeSeq) = {
-  val pe = packagedElements(nodes).filter(_ \"include"\@ ("{" + ns + "}type") == "uml:Include")
-  pe map (o => ( o \@ ("{" + ns + "}id"), o \ "include" \@ "addition"))
+  val pe = packagedElements(nodes)
+  for {
+    as <- pe
+    in <- as \ "include"
+  } yield (as \@ ("{" + ns + "}id"), in \@ "addition")
 }
 
 def in(nodes: NodeSeq) = {
   val pe = packagedElements(nodes)
-  pe map (o => (o \ "packagedElement"\@ ("{" + ns + "}id"), o \@ ("{" + ns + "}id")))
-
+  for {
+    as <- pe
+    spe <- as \ "packagedElement"
+  } yield (spe \@ ("{" + ns + "}id"), as \@ ("{" + ns + "}id"))
 }
 
 
@@ -69,7 +85,9 @@ def unrelatedActors(nodes: NodeSeq) = {
   as filter { case (aid, _) => ! (bs exists { case (bid, _) => aid == bid }) }
 }
 
-//def actorWithinBorder(nodes: NodeSer) = {
+/*
+def actorWithinBorder(nodes: NodeSer) = {
 //  val as = actors(nodes)
 
-//}
+}
+*/
